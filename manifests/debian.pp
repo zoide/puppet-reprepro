@@ -10,7 +10,7 @@ class reprepro::debian {
   include reprepro::params
 
   case $lsbdistcodename {
-    squeeze: { 
+    squeeze, lenny: { 
       package { "reprepro": 
         ensure => 'latest';
       }
