@@ -4,7 +4,6 @@
 Adds a "Distribution" to manage.
 
 Parameters:
-- *name*: the name of the distribution
 - *ensure* present/absent, defaults to present
 - *repository*: the name of the distribution
 - *origin*: package origin
@@ -39,7 +38,6 @@ Example usage:
 
 */
 define reprepro::distribution (
-  $ensure=present,
   $codename,
   $repository,
   $origin,
@@ -49,32 +47,43 @@ define reprepro::distribution (
   $components,
   $description,
   $sign_with,
-  $deb_indices="Packages Release .gz .bz2",
-  $dsc_indices="Sources Release .gz .bz2",
-  $update="",
-  $uploaders="",
-  $not_automatic="yes"
+  $ensure = present,
+  $udebcomponents = 'undef',
+  $deb_indices = 'Packages Release .gz .bz2',
+  $dsc_indices = 'Sources Release .gz .bz2',
+  $update = '',
+  $uploaders = '',
+  $not_automatic = 'yes'
 ) {
 
   include reprepro::params
 
-  common::concatfilepart {"distibution-${name}":
-    ensure  => $ensure,
-    manage  => $ensure ? { present => false, default => true, },
-    content => template("reprepro/distribution.erb"),
-    file    => "${reprepro::params::basedir}/${repository}/conf/distributions",
-    require => Reprepro::Repository[$repository],
-    notify  => $present ? {
-      'present' => Exec["export distribution $name"],
-      default   => undef,
-    },
-  }
-  
-  # FIXME: this exec don't works with user=>reprepro ?!? 
-  exec {"export distribution $name":
-    command     => "su -c 'reprepro -b ${reprepro::params::basedir}/${repository} export ${codename}' reprepro",
-    refreshonly => true,
-    require     => [User[reprepro], Reprepro::Repository[$repository]], 
+  $manage = $ensure ? {
+    present => false,
+    default => true,
   }
 
+  $notify = $ensure ? {
+    present => Exec["export distribution ${name}"],
+    default => undef,
+  }
+
+  common::concatfilepart {"distibution-${name}":
+    ensure  => $ensure,
+    manage  => $manage,
+    content => template('reprepro/distribution.erb'),
+    file    => "${reprepro::params::basedir}/${repository}/conf/distributions",
+    require => Reprepro::Repository[$repository],
+    notify  => $notify,
+  }
+
+  # FIXME: this exec don't works with user=>reprepro ?!?
+  exec {"export distribution ${name}":
+    command     => "su -c 'reprepro -b ${reprepro::params::basedir}/${repository} export ${codename}' reprepro",
+    refreshonly => true,
+    require     => [
+      User[reprepro],
+      Reprepro::Repository[$repository]
+    ],
+  }
 }

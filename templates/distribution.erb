@@ -4,6 +4,9 @@ Suite: <%= suite %>
 Codename: <%= codename %>
 Architectures: <%= architectures %>
 Components: <%= components %>
+<% if @udebcomponents -%>
+UDebComponents: <%= udebcomponents %>
+<% end -%>
 Description: <%= description %>
 DebIndices: <%= deb_indices %>
 DscIndices: <%= dsc_indices %>
