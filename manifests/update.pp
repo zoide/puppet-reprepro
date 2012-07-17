@@ -24,34 +24,44 @@ Example usage:
 
 */
 define reprepro::update (
-  $ensure=present,
+  $suite,
   $repository,
   $url,
-  $verify_release="blindtrust",
-  $filter_action="",
-  $filter_name=""
+  $ensure = present,
+  $architectures = undef,
+  $verify_release = 'blindtrust',
+  $filter_action = '',
+  $filter_name = ''
 ) {
 
   include reprepro::params
-  
-  if $filter_name != "" {
-    if $filter_action == "" {  
+
+  if $filter_name != '' {
+    if $filter_action == '' {
       $filter_list = "deinstall ${filter_name}-filter-list"
     } else {
       $filter_list = "${filter_action} ${filter_name}-filter-list"
     }
   } else {
-    $filter_list = ""
+    $filter_list = ''
+  }
+
+  $manage = $ensure ? {
+    present => false,
+    default => true,
   }
 
   common::concatfilepart {"update-${name}":
     ensure  => $ensure,
-    manage  => $ensure ? { present => false, default => true, },
-    content => template("reprepro/update.erb"),
+    manage  => $manage,
+    content => template('reprepro/update.erb'),
     file    => "${reprepro::params::basedir}/${repository}/conf/updates",
     require => $filter_name ? {
-      ""      => Reprepro::Repository[$repository],
-      default => [Reprepro::Repository[$repository],Reprepro::Filterlist[$filter_name]],
+      ''      => Reprepro::Repository[$repository],
+      default => [
+        Reprepro::Repository[$repository],
+        Reprepro::Filterlist[$filter_name]
+      ],
     }
   }
 
