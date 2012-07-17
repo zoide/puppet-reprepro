@@ -48,7 +48,7 @@ define reprepro::distribution (
   $description,
   $sign_with,
   $ensure = present,
-  $udebcomponents = 'undef',
+  $udebcomponents = undef,
   $deb_indices = 'Packages Release .gz .bz2',
   $dsc_indices = 'Sources Release .gz .bz2',
   $update = '',
