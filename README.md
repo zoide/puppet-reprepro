@@ -7,7 +7,7 @@ The only use-case it has been tested with has been to create a repository of pre
 
 A Full Example
 --------------
-Creating GPG keys by Puppet is a bit complicated -- if anything because the Puppet run could time out before the key is actually made. Because of this, I recommend creating the key manually:
+Creating GPG keys by Puppet is a bit complicated -- for example, the Puppet run could time out before the key is actually made. Because of this, I recommend creating the key manually:
 
 ```shell
 $ su - reprepro
@@ -90,3 +90,6 @@ apt::source { 'localpkgs':
   include_src => false,
 }
 ```
+Credits
+-------
+This module was based off of the existing work done by [saz](https://github.com/saz) and [camptocamp](https://github.com/camptocamp).
