@@ -39,7 +39,6 @@ Example usage:
 
 */
 define reprepro::distribution (
-  $codename,
   $repository,
   $origin,
   $label,
@@ -48,6 +47,7 @@ define reprepro::distribution (
   $components,
   $description,
   $sign_with,
+  $codename       = $name,
   $ensure         = present,
   $basedir        = $::reprepro::params::basedir,
   $udebcomponents = undef,
@@ -60,32 +60,43 @@ define reprepro::distribution (
 
   include reprepro::params
 
-  $manage = $ensure ? {
-    present => false,
-    default => true,
-  }
-
   $notify = $ensure ? {
     present => Exec["export distribution ${name}"],
     default => undef,
   }
 
-  common::concatfilepart {"distibution-${name}":
+  file { "distibution-${name}":
     ensure  => $ensure,
-    manage  => $manage,
     content => template('reprepro/distribution.erb'),
-    file    => "${basedir}/${repository}/conf/distributions",
+    path    => "${basedir}/${repository}/conf/distributions",
     require => Reprepro::Repository[$repository],
     notify  => $notify,
   }
 
-  # FIXME: this exec don't works with user=>reprepro ?!?
   exec {"export distribution ${name}":
-    command     => "su -c 'reprepro -b ${basedir}/${repository} export ${codename}' reprepro",
+    command    => "su -c 'reprepro -b ${basedir}/${repository} export ${codename}' reprepro",
+    path        => ['/bin', '/usr/bin'],
     refreshonly => true,
+    logoutput   => on_failure,
     require     => [
       User['reprepro'],
       Reprepro::Repository[$repository]
     ],
   }
+
+  # Configure system for automatically adding packages
+  file { "${basedir}/${repository}/tmp/${suite}":
+    ensure => directory,
+    mode   => '0755',
+    owner  => $::reprepro::params::user_name,
+    group  => $::reprepro::params::group_name,
+  }
+
+  cron { "${name} cron":
+    command     => "cd ${basedir}/${repository}/tmp/${suite}; if [ -a *.deb ]; then /usr/bin/reprepro -b ${basedir}/${repository} includedeb ${suite} *.deb; rm *.deb; fi",
+    user        => $::reprepro::params::user_name,
+    environment => "SHELL=/bin/bash",
+    minute      => '*/5',
+  }
+
 }

@@ -18,20 +18,11 @@ Requires:
 
 Example usage:
 
-    reprepro::distribution {"dev-lenny-backports":
-      ensure        => present,
-      repository    => "dev",
-      codename      => "lenny-backports",
-      origin        => "Camptocamp",
-      label         => "Camptocamp",
-      suite         => "lenny-backports",
-      architectures => "i386 amd64 source",
-      components    => "main contrib non-free",
-      description   => "Camptocamp consolidated lenny-backports dev-repository",
-      sign_with     => "packages@mycompagny",
-      update        => "lenny-backports",
-      options       => ['verbose', 'basedir .'],
-    }
+  reprepro::repository { 'localpkgs':
+    ensure  => present,
+    options => ['verbose', 'basedir .'],
+  }
+
 
 */
 define reprepro::repository (
@@ -58,7 +49,7 @@ define reprepro::repository (
       purge   => $ensure ? { present => undef,     default => true,}, 
       recurse => $ensure ? { present => undef,     default => true,},
       force   => $ensure ? { present => undef,     default => true,},
-      mode    => '2750',
+      mode    => '2755',
       owner   => 'reprepro', 
       group   => 'reprepro';
        
@@ -89,7 +80,7 @@ define reprepro::repository (
       mode    => '0640',
       owner   => 'reprepro',
       group   => 'reprepro',
-      content => inline_template("<%= $options.join(\"\n\") %>");
+      content => inline_template("<%= options.join(\"\n\") %>\n");
 
     "${basedir}/${name}/conf/incoming":
       ensure  => $ensure,
@@ -97,12 +88,6 @@ define reprepro::repository (
       owner   => 'reprepro',
       group   => 'reprepro',
       content => template("reprepro/incoming.erb");
-  }
-
-  cron { "${name} cron":
-    command => template('reprepro/cron.erb'),
-    user    => $::reprepro::params::user_name,
-    minute  => '*/5',
   }
 
 }
