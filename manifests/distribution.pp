@@ -47,13 +47,13 @@ define reprepro::distribution (
   $components,
   $description,
   $sign_with,
-  $ensure = present,
+  $ensure         = present,
   $udebcomponents = undef,
-  $deb_indices = 'Packages Release .gz .bz2',
-  $dsc_indices = 'Sources Release .gz .bz2',
-  $update = '',
-  $uploaders = '',
-  $not_automatic = 'yes'
+  $deb_indices    = 'Packages Release .gz .bz2',
+  $dsc_indices    = 'Sources Release .gz .bz2',
+  $update         = '',
+  $uploaders      = '',
+  $not_automatic  = 'yes'
 ) {
 
   include reprepro::params
@@ -72,17 +72,17 @@ define reprepro::distribution (
     ensure  => $ensure,
     manage  => $manage,
     content => template('reprepro/distribution.erb'),
-    file    => "${reprepro::params::basedir}/${repository}/conf/distributions",
+    file    => "${::reprepro::params::basedir}/${repository}/conf/distributions",
     require => Reprepro::Repository[$repository],
     notify  => $notify,
   }
 
   # FIXME: this exec don't works with user=>reprepro ?!?
   exec {"export distribution ${name}":
-    command     => "su -c 'reprepro -b ${reprepro::params::basedir}/${repository} export ${codename}' reprepro",
+    command     => "su -c 'reprepro -b ${::reprepro::params::basedir}/${repository} export ${codename}' reprepro",
     refreshonly => true,
     require     => [
-      User[reprepro],
+      User['reprepro'],
       Reprepro::Repository[$repository]
     ],
   }
