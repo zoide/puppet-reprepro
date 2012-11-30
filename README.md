@@ -7,7 +7,7 @@ The only use-case it has been tested with has been to create a repository of pre
 
 A Full Example
 --------------
-Creating GPG keys by Puppet is a bit complicated -- for example, the Puppet run could time out before the key is actually made. Because of this, I recommend creating the key manually:
+Using Puppet to create GPG keys is a bit complicated -- for example, the Puppet run could time out before the key is actually made. Because of this, I recommend creating the key manually:
 
 ```shell
 $ su - reprepro
@@ -22,7 +22,7 @@ $ gpg --export --armor foo@bar.com > /etc/puppet/modules/reprepro/files/localpkg
 # Alternatively, you can run the above commands as root and then later
 # copy them to the reprepro user's home directory. This is a way to get
 # around the chicken-and-egg scenario of having to create a key owned
-# by a user that won't exist before running the Puppet manifest.
+# by a user that won't exist until after using the reprepro module.
 ```
 
 The following is a full-stack example. This will create a reprepro-based repository, configure apache to allow access to the repository via http, and install the repository to your local apt configuration.
