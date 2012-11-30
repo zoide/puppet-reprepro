@@ -1,0 +1,1 @@
+cd <%= "#{basedir}/#{name}/incoming" -%>; if [ -a *.deb ]; then reprepro . includedeb <%= suite %> *.deb; fi
