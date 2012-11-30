@@ -6,10 +6,12 @@ Adds a packages repository.
 Parameters:
 - *name*: the name of the repository
 - *ensure*: present/absent, defaults to present
+- *basedir*: base directory of reprepro
 - *incoming_name*: the name of the rule-set, used as argument
 - *incoming_dir*: the name of the directory to scan for .changes files
 - *incoming_tmpdir*: directory where the files are copied into before they are read
 - *incoming_allow*: allowed distributions
+- *options*: reprepro options
 
 Requires:
 - Class["reprepro"]
@@ -34,6 +36,7 @@ Example usage:
 */
 define reprepro::repository (
   $ensure          = present,
+  $basedir         = $::reprepro::params::basedir,
   $incoming_name   = "incoming",
   $incoming_dir    = "incoming",
   $incoming_tmpdir = "tmp",
@@ -45,11 +48,11 @@ define reprepro::repository (
 
   file {
     [
-      "${::reprepro::params::basedir}/${name}/conf",
-      "${::reprepro::params::basedir}/${name}/lists",
-      "${::reprepro::params::basedir}/${name}/db",
-      "${::reprepro::params::basedir}/${name}/logs",
-      "${::reprepro::params::basedir}/${name}/tmp",
+      "${basedir}/${name}/conf",
+      "${basedir}/${name}/lists",
+      "${basedir}/${name}/db",
+      "${basedir}/${name}/logs",
+      "${basedir}/${name}/tmp",
     ]:
       ensure  => $ensure ? { present => directory, default => $ensure,},
       purge   => $ensure ? { present => undef,     default => true,}, 
@@ -60,9 +63,9 @@ define reprepro::repository (
       group   => 'reprepro';
        
     [
-      "${::reprepro::params::basedir}/${name}",
-      "${::reprepro::params::basedir}/${name}/dists",
-      "${::reprepro::params::basedir}/${name}/pool",
+      "${basedir}/${name}",
+      "${basedir}/${name}/dists",
+      "${basedir}/${name}/pool",
     ]:
       ensure  => $ensure ? { present => directory, default => $ensure,},
       purge   => $ensure ? { present => undef,     default => true,}, 
@@ -72,7 +75,7 @@ define reprepro::repository (
       owner   => 'reprepro', 
       group   => 'reprepro';
 
-    "${::reprepro::params::basedir}/${name}/incoming":
+    "${basedir}/${name}/incoming":
       ensure  => $ensure ? { present => directory, default => $ensure,},
       purge   => $ensure ? { present => undef,     default => true,}, 
       recurse => $ensure ? { present => undef,     default => true,},
@@ -81,19 +84,25 @@ define reprepro::repository (
       owner   => 'reprepro',
       group   => 'reprepro';
 
-    "${::reprepro::params::basedir}/${name}/conf/options":
+    "${basedir}/${name}/conf/options":
       ensure  => $ensure,
       mode    => '0640',
       owner   => 'reprepro',
       group   => 'reprepro',
       content => inline_template("<%= $options.join(\"\n\") %>");
 
-    "${::reprepro::params::basedir}/${name}/conf/incoming":
+    "${basedir}/${name}/conf/incoming":
       ensure  => $ensure,
       mode    => '0640',
       owner   => 'reprepro',
       group   => 'reprepro',
       content => template("reprepro/incoming.erb");
+  }
+
+  cron { "${name} cron":
+    command => template('reprepro/cron.erb'),
+    user    => $::reprepro::params::user_name,
+    minute  => '*/5',
   }
 
 }
