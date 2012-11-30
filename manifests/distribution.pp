@@ -5,6 +5,7 @@ Adds a "Distribution" to manage.
 
 Parameters:
 - *ensure* present/absent, defaults to present
+- *basedir* reprepro basedir
 - *repository*: the name of the distribution
 - *origin*: package origin
 - *label*: package label
@@ -48,6 +49,7 @@ define reprepro::distribution (
   $description,
   $sign_with,
   $ensure         = present,
+  $basedir        = $::reprepro::params::basedir,
   $udebcomponents = undef,
   $deb_indices    = 'Packages Release .gz .bz2',
   $dsc_indices    = 'Sources Release .gz .bz2',
@@ -72,14 +74,14 @@ define reprepro::distribution (
     ensure  => $ensure,
     manage  => $manage,
     content => template('reprepro/distribution.erb'),
-    file    => "${::reprepro::params::basedir}/${repository}/conf/distributions",
+    file    => "${basedir}/${repository}/conf/distributions",
     require => Reprepro::Repository[$repository],
     notify  => $notify,
   }
 
   # FIXME: this exec don't works with user=>reprepro ?!?
   exec {"export distribution ${name}":
-    command     => "su -c 'reprepro -b ${::reprepro::params::basedir}/${repository} export ${codename}' reprepro",
+    command     => "su -c 'reprepro -b ${basedir}/${repository} export ${codename}' reprepro",
     refreshonly => true,
     require     => [
       User['reprepro'],
