@@ -7,9 +7,15 @@ Global parameters
 */
 class reprepro::params {
 
-  $basedir = $reprepro_basedir ? {
-    "" => "/var/packages",
-    default => $reprepro_basedir,
+  $basedir = '/var/packages'
+  $ensure  = present
+
+  case $::osfamily {
+    Debian: {
+      $package_name = 'reprepro'
+      $user_name    = 'reprepro'
+      $group_name   = 'reprepro'
+    }
   }
 
 }
