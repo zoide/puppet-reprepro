@@ -56,6 +56,7 @@ reprepro::distribution { 'precise':
   components    => 'main contrib non-free',
   description   => 'Package repository for local site maintenance',
   sign_with     => 'F4D5DAA8',
+  not_automatic => 'No',
 }
 
 # Set up apache
