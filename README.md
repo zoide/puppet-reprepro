@@ -51,7 +51,7 @@ reprepro::distribution { 'precise':
   repository    => 'localpkgs',
   origin        => 'Foobar',
   label         => 'Foobar',
-  suite         => 'stable',
+  suite         => 'precise',
   architectures => 'amd64 i386',
   components    => 'main contrib non-free',
   description   => 'Package repository for local site maintenance',

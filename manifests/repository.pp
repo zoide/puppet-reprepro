@@ -36,6 +36,7 @@ define reprepro::repository (
   ) {
 
   include reprepro::params
+  include concat::setup
 
   file {
     [
@@ -88,6 +89,12 @@ define reprepro::repository (
       owner   => 'reprepro',
       group   => 'reprepro',
       content => template("reprepro/incoming.erb");
+  }
+
+  concat { "${basedir}/${name}/conf/distributions":
+    owner => 'reprepro',
+    group => 'reprepro',
+    mode  => '0640',
   }
 
 }

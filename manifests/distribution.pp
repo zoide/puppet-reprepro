@@ -59,17 +59,17 @@ define reprepro::distribution (
 ) {
 
   include reprepro::params
+  include concat::setup
 
   $notify = $ensure ? {
     present => Exec["export distribution ${name}"],
     default => undef,
   }
 
-  file { "distibution-${name}":
+  concat::fragment { "distribution-${name}":
     ensure  => $ensure,
+    target  => "${basedir}/${repository}/conf/distributions",
     content => template('reprepro/distribution.erb'),
-    path    => "${basedir}/${repository}/conf/distributions",
-    require => Reprepro::Repository[$repository],
     notify  => $notify,
   }
 
