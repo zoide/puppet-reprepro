@@ -39,7 +39,7 @@ define reprepro::filterlist (
   file {"${reprepro::params::basedir}/${repository}/conf/${name}-filter-list":
     ensure  => $ensure,
     owner   => 'root',
-    group   => ${reprepro::params::group_name},
+    group   => $::reprepro::params::group_name,
     mode    => '0664',
     content => template('reprepro/filterlist.erb'),
   }
