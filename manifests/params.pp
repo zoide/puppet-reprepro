@@ -8,6 +8,7 @@ Global parameters
 class reprepro::params {
 
   $ensure  = present
+  $basedir = '/var/packages'
 
   case $::osfamily {
     Debian: {

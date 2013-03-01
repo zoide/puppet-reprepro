@@ -27,7 +27,7 @@ define reprepro::update (
   $suite,
   $repository,
   $url,
-  $basedir = $reprepro::params::basedir,
+  $basedir = $::reprepro::params::basedir,
   $ensure = present,
   $architectures = undef,
   $verify_release = 'blindtrust',
