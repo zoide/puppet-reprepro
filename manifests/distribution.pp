@@ -18,6 +18,7 @@ Parameters:
 - *dsc_indices*: file name and compression
 - *update*: update policy name
 - *uploaders*: who is allowed to upload packages
+- *install_cron*: install cron job to automatically include new packages
 - *not_automatic*: automatic pined to 1 by using NotAutomatic, value are "yes" or "no"
 
 Requires:
