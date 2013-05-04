@@ -55,6 +55,7 @@ define reprepro::distribution (
   $dsc_indices    = 'Sources Release .gz .bz2',
   $update         = '',
   $uploaders      = '',
+  $install_cron   = true,
   $not_automatic  = 'yes'
 ) {
 
@@ -92,11 +93,13 @@ define reprepro::distribution (
     group  => $::reprepro::params::group_name,
   }
 
-  cron { "${name} cron":
-    command     => "cd ${basedir}/${repository}/tmp/${suite}; ls *.deb 2>/dev/null; if [ $? -eq 0 ]; then /usr/bin/reprepro -b ${basedir}/${repository} includedeb ${suite} *.deb; rm *.deb; fi",
-    user        => $::reprepro::params::user_name,
-    environment => "SHELL=/bin/bash",
-    minute      => '*/5',
+  if $install_cron {
+    cron { "${name} cron":
+      command     => "cd ${basedir}/${repository}/tmp/${suite}; ls *.deb 2>/dev/null; if [ $? -eq 0 ]; then /usr/bin/reprepro -b ${basedir}/${repository} includedeb ${suite} *.deb; rm *.deb; fi",
+      user        => $::reprepro::params::user_name,
+      environment => "SHELL=/bin/bash",
+      minute      => '*/5',
+    }
   }
 
 }
