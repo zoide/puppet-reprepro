@@ -1,11 +1,5 @@
-class reprepro (
-  $basedir = $::reprepro::params::basedir,
-  $homedir = $::reprepro::params::homedir,
-) inherits reprepro::params {
-
-  package { $::reprepro::params::package_name:
-    ensure => $::reprepro::params::ensure,
-  }
+class reprepro ($basedir = $::reprepro::params::basedir, $homedir = $::reprepro::params::homedir,) inherits reprepro::params {
+  package { $::reprepro::params::package_name: ensure => $::reprepro::params::ensure, }
 
   group { 'reprepro':
     name   => $::reprepro::params::group_name,
@@ -22,20 +16,23 @@ class reprepro (
     require => Group['reprepro'],
   }
 
-  file { $basedir:
+  File {
     ensure  => directory,
     owner   => $::reprepro::params::user_name,
     group   => $::reprepro::params::group_name,
-    mode    => '0755',
     require => User['reprepro'],
   }
 
-  file { "${homedir}/.gnupg":
-    ensure  => directory,
-    owner   => $::reprepro::params::user_name,
-    group   => $::reprepro::params::group_name,
-    mode    => '0700',
-    require => User['reprepro'],
+  file {
+    $basedir:
+      mode => '0755';
+
+    "${homedir}/.gnupg":
+      mode => '0700';
+
+    "${basedir}/import-new-packages.sh":
+      source => "puppet:///modules/reprepro/import-packages.sh",
+      mode   => '0700';
   }
 
 }
