@@ -9,7 +9,8 @@
  * - *basedir*: base directory of reprepro
  * - *incoming_name*: the name of the rule-set, used as argument
  * - *incoming_dir*: the name of the directory to scan for .changes files
- * - *incoming_tmpdir*: directory where the files are copied into before they are read
+ * - *incoming_tmpdir*: directory where the files are copied into before they
+ * are read
  * - *incoming_allow*: allowed distributions
  * - *owner*: owner of reprepro files
  * - *group*: reprepro files group
@@ -28,16 +29,13 @@
 define reprepro::repository (
   $ensure          = present,
   $basedir         = $::reprepro::params::basedir,
-  $incoming_name   = "incoming",
-  $incoming_dir    = "incoming",
-  $incoming_tmpdir = "tmp",
-  $incoming_allow  = "",
+  $incoming_name   = 'incoming',
+  $incoming_dir    = 'incoming',
+  $incoming_tmpdir = 'tmp',
+  $incoming_allow  = '',
   $owner           = 'reprepro',
   $group           = 'reprepro',
-  $options         = [
-    'verbose',
-    'ask-passphrase',
-    'basedir .']) {
+  $options         = ['verbose', 'ask-passphrase', 'basedir .']) {
   include reprepro::params
   include concat::setup
 
@@ -50,7 +48,7 @@ define reprepro::repository (
 
   file { "${basedir}/${name}":
     ensure  => $ensure ? {
-      present => directory,
+      present => 'directory',
       default => $ensure,
     },
     purge   => $ensure ? {
@@ -70,35 +68,35 @@ define reprepro::repository (
   if $ensure == 'present' {
     file {
       "${basedir}/${name}/dists":
-        ensure  => directory,
+        ensure  => 'directory',
         require => File["${basedir}/${name}"];
 
       "${basedir}/${name}/pool":
-        ensure  => directory,
+        ensure  => 'directory',
         require => File["${basedir}/${name}"];
 
       "${basedir}/${name}/conf":
-        ensure  => directory,
+        ensure  => 'directory',
         require => File["${basedir}/${name}"];
 
       "${basedir}/${name}/lists":
-        ensure  => directory,
+        ensure  => 'directory',
         require => File["${basedir}/${name}"];
 
       "${basedir}/${name}/db":
-        ensure  => directory,
+        ensure  => 'directory',
         require => File["${basedir}/${name}"];
 
       "${basedir}/${name}/logs":
-        ensure  => directory,
+        ensure  => 'directory',
         require => File["${basedir}/${name}"];
 
       "${basedir}/${name}/tmp":
-        ensure  => directory,
+        ensure  => 'directory',
         require => File["${basedir}/${name}"];
 
       "${basedir}/${name}/incoming":
-        ensure  => directory,
+        ensure  => 'directory',
         require => File["${basedir}/${name}"];
 
       "${basedir}/${name}/conf/options":
@@ -108,7 +106,7 @@ define reprepro::repository (
 
       "${basedir}/${name}/conf/incoming":
         mode    => '0640',
-        content => template("reprepro/incoming.erb"),
+        content => template('reprepro/incoming.erb'),
         require => File["${basedir}/${name}/conf"];
     }
 

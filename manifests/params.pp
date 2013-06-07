@@ -1,21 +1,22 @@
 /*
-
-== Class: reprepro::params
-
-Global parameters
-
-*/
+ *
+ * == Class: reprepro::params
+ *
+ * Global parameters
+ */
 class reprepro::params {
-
-  $ensure  = present
+  $ensure = present
   $basedir = '/var/packages'
   $homedir = $basedir
 
   case $::osfamily {
-    Debian: {
+    Debian  : {
       $package_name = 'reprepro'
-      $user_name    = 'reprepro'
-      $group_name   = 'reprepro'
+      $user_name = 'reprepro'
+      $group_name = 'reprepro'
+    }
+    default : {
+      fail("Does not work on ${::osfamily}")
     }
   }
 
