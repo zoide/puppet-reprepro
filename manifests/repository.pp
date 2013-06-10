@@ -97,7 +97,8 @@ define reprepro::repository (
 
       "${basedir}/${name}/incoming":
         ensure  => 'directory',
-        require => File["${basedir}/${name}"];
+        require => File["${basedir}/${name}"],
+        mode    => '2775';
 
       "${basedir}/${name}/conf/options":
         mode    => '0640',
