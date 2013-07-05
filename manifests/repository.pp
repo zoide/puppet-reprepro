@@ -27,7 +27,7 @@
  *}
  */
 define reprepro::repository (
-  $ensure          = present,
+  $ensure          = 'present',
   $basedir         = $::reprepro::params::basedir,
   $incoming_name   = 'incoming',
   $incoming_dir    = 'incoming',

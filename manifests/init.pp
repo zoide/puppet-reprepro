@@ -1,5 +1,8 @@
-class reprepro ($basedir = $::reprepro::params::basedir, $homedir = $::reprepro::params::homedir,) inherits reprepro::params {
-  package { $::reprepro::params::package_name: ensure => $::reprepro::params::ensure, }
+class reprepro (
+  $basedir = $::reprepro::params::basedir,
+  $homedir = $::reprepro::params::homedir,) inherits reprepro::params {
+  package { $::reprepro::params::package_name: ensure => 
+    $::reprepro::params::ensure, }
 
   group { 'reprepro':
     name   => $::reprepro::params::group_name,
@@ -8,7 +11,7 @@ class reprepro ($basedir = $::reprepro::params::basedir, $homedir = $::reprepro:
 
   user { 'reprepro':
     name    => $::reprepro::params::user_name,
-    ensure  => present,
+    ensure  => 'present',
     home    => $homedir,
     shell   => '/bin/bash',
     comment => 'Reprepro user',
