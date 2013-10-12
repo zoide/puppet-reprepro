@@ -1,5 +1,8 @@
-class reprepro ($basedir = $::reprepro::params::basedir, $homedir = $::reprepro::params::homedir,) inherits reprepro::params {
-  package { $::reprepro::params::package_name: ensure => $::reprepro::params::ensure, }
+class reprepro (
+  $basedir = $::reprepro::params::basedir,
+  $homedir = $::reprepro::params::homedir,) inherits reprepro::params {
+  package { $::reprepro::params::package_name: ensure => 
+    $::reprepro::params::ensure, }
 
   group { 'reprepro':
     name   => $::reprepro::params::group_name,
@@ -33,6 +36,10 @@ class reprepro ($basedir = $::reprepro::params::basedir, $homedir = $::reprepro:
     "${basedir}/import-new-packages.sh":
       source => "puppet:///modules/reprepro/import-packages.sh",
       mode   => '0700';
+
+    '/var/log/reprepro':
+      mode   => '0755',
+      ensure => 'directory';
   }
 
 }

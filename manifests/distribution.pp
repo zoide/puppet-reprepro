@@ -1,44 +1,44 @@
 /*
-== Definition: reprepro::distribution
-
-Adds a "Distribution" to manage.
-
-Parameters:
-- *ensure* present/absent, defaults to present
-- *basedir* reprepro basedir
-- *repository*: the name of the distribution
-- *origin*: package origin
-- *label*: package label
-- *suite*: package suite
-- *architectures*: available architectures
-- *components*: available components
-- *description*: a short description
-- *sign_with*: email of the gpg key
-- *deb_indices*: file name and compression
-- *dsc_indices*: file name and compression
-- *update*: update policy name
-- *uploaders*: who is allowed to upload packages
-- *install_cron*: install cron job to automatically include new packages
-- *not_automatic*: automatic pined to 1 by using NotAutomatic, value are "yes" or "no"
-
-Requires:
-- Class["reprepro"]
-
-Example usage:
-
-  reprepro::distribution {"lenny":
-    ensure        => present,
-    repository    => "my-repository",
-    origin        => "Camptocamp",
-    label         => "Camptocamp",
-    suite         => "stable",
-    architectures => "i386 amd64 source",
-    components    => "main contrib non-free",
-    description   => "A simple example of repository distribution",
-    sign_with     => "packages@camptocamp.com",
-  }
-
-*/
+ * == Definition: reprepro::distribution
+ *
+ * Adds a "Distribution" to manage.
+ *
+ * Parameters:
+ * - *ensure* present/absent, defaults to present
+ * - *basedir* reprepro basedir
+ * - *repository*: the name of the distribution
+ * - *origin*: package origin
+ * - *label*: package label
+ * - *suite*: package suite
+ * - *architectures*: available architectures
+ * - *components*: available components
+ * - *description*: a short description
+ * - *sign_with*: email of the gpg key
+ * - *deb_indices*: file name and compression
+ * - *dsc_indices*: file name and compression
+ * - *update*: update policy name
+ * - *uploaders*: who is allowed to upload packages
+ * - *install_cron*: install cron job to automatically include new packages
+ * - *not_automatic*: automatic pined to 1 by using NotAutomatic, value are
+ * "yes" or "no"
+ *
+ * Requires:
+ * - Class["reprepro"]
+ *
+ * Example usage:
+ *
+ * reprepro::distribution {"lenny":
+ *  ensure        => present,
+ *  repository    => "my-repository",
+ *  origin        => "Camptocamp",
+ *  label         => "Camptocamp",
+ *  suite         => "stable",
+ *  architectures => "i386 amd64 source",
+ *  components    => "main contrib non-free",
+ *  description   => "A simple example of repository distribution",
+ *  sign_with     => "packages@camptocamp.com",
+ *}
+ */
 define reprepro::distribution (
   $repository,
   $origin,
@@ -57,9 +57,8 @@ define reprepro::distribution (
   $update         = '',
   $uploaders      = '',
   $install_cron   = true,
-  $not_automatic  = 'yes'
-) {
-
+  $not_automatic  = 'yes',
+  $log            = '/var/log/reprepro') {
   include reprepro::params
   include concat::setup
 
@@ -75,15 +74,12 @@ define reprepro::distribution (
     notify  => $notify,
   }
 
-  exec {"export distribution ${name}":
-    command    => "su -c 'reprepro -b ${basedir}/${repository} export ${codename}' reprepro",
+  exec { "export distribution ${name}":
+    command     => "su -c 'reprepro -b ${basedir}/${repository} export ${codename}' reprepro",
     path        => ['/bin', '/usr/bin'],
     refreshonly => true,
     logoutput   => on_failure,
-    require     => [
-      User['reprepro'],
-      Reprepro::Repository[$repository]
-    ],
+    require     => [User['reprepro'], Reprepro::Repository[$repository]],
   }
 
   # Configure system for automatically adding packages
