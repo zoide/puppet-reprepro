@@ -1,40 +1,38 @@
 /*
-== Definition: reprepro::update
-Adds a packages repository.
-
-Parameters:
-- *name*: the name of the update-upstream use in the Update field in conf/distributions
-- *ensure*: present/absent, defaults to present
-- *url*: a valid repository URL
-- *verify_release*: check the GPG signature Releasefile
-- *filter_action*: default action when something is not found in the list
-- *filter_name*: a list of filenames in the format of dpkg --get-selections
-
-Requires:
-- Class["reprepro"]
-
-Example usage:
-
-  reprepro::update {"lenny-backports":
-    ensure      => present,
-    repository  => "dev",
-    url         => 'http://backports.debian.org/debian-backports',
-    filter_name => "lenny-backports",
-  }
-
-*/
+ * == Definition: reprepro::update
+ * Adds a packages repository.
+ *
+ * Parameters:
+ * - *name*: the name of the update-upstream use in the Update field in
+ * conf/distributions
+ * - *ensure*: present/absent, defaults to present
+ * - *url*: a valid repository URL
+ * - *verify_release*: check the GPG signature Releasefile
+ * - *filter_action*: default action when something is not found in the list
+ * - *filter_name*: a list of filenames in the format of dpkg --get-selections
+ *
+ * Requires:
+ * - Class["reprepro"]
+ *
+ * Example usage:
+ *
+ * reprepro::update {"lenny-backports":
+ *  ensure      => present,
+ *  repository  => "dev",
+ *  url         => 'http://backports.debian.org/debian-backports',
+ *  filter_name => "lenny-backports",
+ *}
+ */
 define reprepro::update (
   $suite,
   $repository,
   $url,
-  $basedir = $::reprepro::params::basedir,
-  $ensure = present,
-  $architectures = undef,
+  $ensure         = 'present',
+  $basedir        = $::reprepro::params::basedir,
+  $architectures  = undef,
   $verify_release = 'blindtrust',
-  $filter_action = '',
-  $filter_name = ''
-) {
-
+  $filter_action  = '',
+  $filter_name    = '') {
   include reprepro::params
 
   if $filter_name != '' {
@@ -52,7 +50,7 @@ define reprepro::update (
     default => true,
   }
 
-  common::concatfilepart {"update-${name}":
+  common::concatfilepart { "update-${name}":
     ensure  => $ensure,
     manage  => $manage,
     content => template('reprepro/update.erb'),
@@ -61,8 +59,7 @@ define reprepro::update (
       ''      => Reprepro::Repository[$repository],
       default => [
         Reprepro::Repository[$repository],
-        Reprepro::Filterlist[$filter_name]
-      ],
+        Reprepro::Filterlist[$filter_name]],
     }
   }
 

@@ -11,7 +11,7 @@ class reprepro (
 
   user { 'reprepro':
     name    => $::reprepro::params::user_name,
-    ensure  => present,
+    ensure  => 'present',
     home    => $homedir,
     shell   => '/bin/bash',
     comment => 'Reprepro user',
