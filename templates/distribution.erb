@@ -2,8 +2,8 @@ Origin: <%= origin %>
 Label: <%= label %>
 Suite: <%= suite %>
 Codename: <%= codename %>
-Architectures: <%= architectures %>
-Components: <%= components %>
+Architectures: <%= [architectures].flatten.join(' ') %>
+Components: <%= [components].flatten.join(' ') %>
 <% if udebcomponents != "" -%>
 UDebComponents: <%= udebcomponents %>
 <% end -%>
@@ -19,5 +19,8 @@ Update: <%= update %>
 <% end -%>
 <% if not_automatic != "" -%>
 NotAutomatic: <%= not_automatic %>
+<% end -%>
+<% if log -%>
+Log: <%= log %>/<%= label %>.log
 <% end -%>
 
