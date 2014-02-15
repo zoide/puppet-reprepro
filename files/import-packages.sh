@@ -55,5 +55,5 @@ for i in $INCOMING/*.changes; do
   done
 
   # Finally delete the .changes file itself.
-  rm  $i
+  rm -f $i
 done
