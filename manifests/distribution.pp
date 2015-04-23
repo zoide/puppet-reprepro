@@ -75,7 +75,7 @@ define reprepro::distribution (
   }
 
   exec { "export distribution ${name}":
-    command     => "su -c 'reprepro -b ${basedir}/${repository} export ${codename}' reprepro",
+    command     => "su - reprepro -c 'reprepro -b ${basedir}/${repository} export ${codename}'",
     path        => ['/bin', '/usr/bin'],
     refreshonly => true,
     logoutput   => on_failure,
